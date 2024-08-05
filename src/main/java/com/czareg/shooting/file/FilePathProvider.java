@@ -14,12 +14,12 @@ class FilePathProvider {
         URL resource = FileOperations.class.getProtectionDomain().getCodeSource().getLocation();
         Path path = Paths.get(resource.toURI());
 
-        // If running from a JAR file use target/SHO.IN (copied from example directory during packaging (see pom)
+        // If running from a JAR file use "target/<input_file>" path
         if (path.toString().endsWith(".jar")) {
             return path.getParent();
         }
 
-        // If running from an IDE, use example/SHO.IN
+        // If running from an IDE, use "example/<input_file>" path
         return Paths.get("example").toAbsolutePath();
     }
 }

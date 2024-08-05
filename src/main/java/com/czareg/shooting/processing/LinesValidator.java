@@ -7,34 +7,41 @@ import java.util.List;
 @UtilityClass
 class LinesValidator {
 
-    static void validate(List<String> lines) {
-        int numberOfBlocks = parseIntOrThrow(lines.getFirst());
+    static void validate(List<String> inputLines) {
+        validateLinesNotEmpty(inputLines);
+        int numberOfBlocks = parseIntOrThrow(inputLines.getFirst());
         validateNumberOfBlocks(numberOfBlocks);
         int lineIndex = 1;
         for (int block = 0; block < numberOfBlocks; block++) {
-            int[] firstLine = readTwoIntValuesFromLine(lineIndex++, lines);
+            int[] firstLine = readTwoIntValuesFromLine(lineIndex++, inputLines);
             int rows = firstLine[0];
             int columns = firstLine[1];
             validateRowsAndColumns(rows, columns);
             for (int column = 0; column < columns; column++) {
-                int[] line = readTwoIntValuesFromLine(lineIndex++, lines);
+                int[] line = readTwoIntValuesFromLine(lineIndex++, inputLines);
                 validateWhitePositions(line, rows);
             }
         }
-        validateAllDataRead(lineIndex, lines);
+        validateAllDataRead(lineIndex, inputLines);
     }
 
-    private static int[] readTwoIntValuesFromLine(int lineIndex, List<String> lines) {
-        if (lineIndex >= lines.size()) {
+    private static int[] readTwoIntValuesFromLine(int lineIndex, List<String> inputLines) {
+        if (lineIndex >= inputLines.size()) {
             throw new IllegalArgumentException("Line: %s is missing".formatted(lineIndex + 1));
         }
-        String[] line = lines.get(lineIndex).trim().split(" ");
+        String[] line = inputLines.get(lineIndex).trim().split(" ");
         if (line.length != 2) {
             throw new IllegalArgumentException("Line: %s must contain two values".formatted(lineIndex + 1));
         }
         int firstValue = parseIntOrThrow(line[0]);
         int secondValue = parseIntOrThrow(line[1]);
         return new int[]{firstValue, secondValue};
+    }
+
+    private static void validateLinesNotEmpty(List<String> inputLines) {
+        if (inputLines.isEmpty()) {
+            throw new IllegalArgumentException("Input file is empty");
+        }
     }
 
     private static void validateNumberOfBlocks(int numberOfBlocks) {
@@ -49,9 +56,9 @@ class LinesValidator {
         }
     }
 
-    private static void validateWhitePositions(int[] line, int rows) {
-        int firstWhitePosition = line[0];
-        int secondWhitePosition = line[1];
+    private static void validateWhitePositions(int[] lineValues, int rows) {
+        int firstWhitePosition = lineValues[0];
+        int secondWhitePosition = lineValues[1];
         if (firstWhitePosition < 1 || firstWhitePosition > rows
                 || secondWhitePosition < 1 || secondWhitePosition > rows
                 || firstWhitePosition == secondWhitePosition) {
@@ -59,8 +66,8 @@ class LinesValidator {
         }
     }
 
-    private static void validateAllDataRead(int lineIndex, List<String> lines) {
-        if (lineIndex != lines.size()) {
+    private static void validateAllDataRead(int lineIndex, List<String> inputLines) {
+        if (lineIndex != inputLines.size()) {
             throw new IllegalArgumentException("Unexpected unread line: %s".formatted(lineIndex + 1));
         }
     }
